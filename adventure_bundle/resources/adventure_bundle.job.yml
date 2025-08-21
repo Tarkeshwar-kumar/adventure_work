@@ -1,32 +1,38 @@
 # The main job for adventure_bundle.
 resources:
   jobs:
-    adventure_bundle_job:
-      name: adventure_bundle_job
-
-      trigger:
-        # Run this job every day, exactly one day from the last run; see https://docs.databricks.com/api/workspace/jobs/create#trigger
-        periodic:
-          interval: 1
-          unit: DAYS
+    adventure_silver_job:
+      name: adventure_silver_job
 
       tasks:
-        - task_key: notebook_task
-          job_cluster_key: job_cluster
+        - task_key: calender task
           notebook_task:
-            notebook_path: ../src/notebook.ipynb
+            notebook_path: ../src/silver/calender_notebook.ipynb
+
+        - task_key: categories task
+          notebook_task:
+            notebook_path: ../src/silver/categories_notebook.ipynb
         
-        - task_key: refresh_pipeline
-          depends_on:
-            - task_key: notebook_task
-          pipeline_task:
-            pipeline_id: ${resources.pipelines.adventure_bundle_pipeline.id}
+        - task_key: customers task
+          notebook_task:
+            notebook_path: ../src/silver/custmoers_notebook.ipynb
+          
+        - task_key: products task
+          notebook_task:
+            notebook_path: ../src/silver/product_notebook.ipynb
+
+        - task_key: returns task
+          notebook_task:
+            notebook_path: ../src/silver/returns_notebook.ipynb
+
+        - task_key: sales task
+          notebook_task:
+            notebook_path: ../src/silver/sales_notebook.ipynb
         
-      job_clusters:
-        - job_cluster_key: job_cluster
-          new_cluster:
-            spark_version: 15.4.x-scala2.12
-            node_type_id: i3.xlarge
-            autoscale:
-                min_workers: 1
-                max_workers: 4
+        - task_key: territories task
+          notebook_task:
+            notebook_path: ../src/silver/territories_notebook.ipynb
+          
+        - task_key: subcategories task
+          notebook_task:
+            notebook_path: ../src/silver/subcategories_notebook.ipynb
