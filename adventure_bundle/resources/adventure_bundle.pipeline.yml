@@ -1,0 +1,13 @@
+# The main pipeline for adventure_bundle
+resources:
+  pipelines:
+    adventure_bundle_pipeline:
+      name: adventure_bundle_pipeline
+      catalog: workspace
+      target: adventure_bundle_${bundle.target}
+      libraries:
+        - notebook:
+            path: ../src/dlt_pipeline.ipynb
+
+      configuration:
+        bundle.sourcePath: ${workspace.file_path}/src

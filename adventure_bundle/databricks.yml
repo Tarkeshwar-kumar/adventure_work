@@ -1,0 +1,30 @@
+# This is a Databricks asset bundle definition for adventure_bundle.
+# See https://docs.databricks.com/dev-tools/bundles/index.html for documentation.
+bundle:
+  name: adventure_bundle
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    # The default target uses 'mode: development' to create a development copy.
+    # - Deployed resources get prefixed with '[dev my_user_name]'
+    # - Any job schedules and triggers are paused by default.
+    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-f461f1c7-20a7.cloud.databricks.com
+
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-f461f1c7-20a7.cloud.databricks.com
+      # We explicitly specify /Workspace/Users/c0ded03f-84c4-4886-8fa9-94a76e75de89 to make sure we only have a single copy.
+      root_path: /Workspace/Users/c0ded03f-84c4-4886-8fa9-94a76e75de89/.bundle/${bundle.name}/${bundle.target}
+    permissions:
+      - service_principal_name: c0ded03f-84c4-4886-8fa9-94a76e75de89
+        level: CAN_MANAGE
+    run_as:
+      service_principal_name: c0ded03f-84c4-4886-8fa9-94a76e75de89
