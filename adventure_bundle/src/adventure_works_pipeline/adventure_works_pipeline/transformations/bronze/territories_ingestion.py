@@ -7,4 +7,4 @@ spark.sql("USE CATALOG adventure_work"); spark.sql("USE SCHEMA bronze")
 )
 def territories_bronze():
     return spark.readStream.format("delta")\
-            .load("/Volumes/adventure_work/bronze/data/Territories/")
+            .load("/Volumes/adventure_work/bronze/data/territories/")
