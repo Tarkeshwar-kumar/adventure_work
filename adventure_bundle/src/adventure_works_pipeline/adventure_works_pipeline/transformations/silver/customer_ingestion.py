@@ -3,6 +3,12 @@ from pyspark.sql.functions import *
 
 spark.sql("USE CATALOG adventure_work"); spark.sql("USE SCHEMA silver")
 
+valid_customers = {
+    "valid_customerkey": "CustomerKey IS NOT NULL",
+    "valid_income": "AnnualIncome >= 0",
+    "valid_birthdate": "BirthDate IS NOT NULL"
+}
+
 @dlt.view(
     name = "dim_customers_stg"
 )
@@ -22,17 +28,21 @@ def dim_customers_stg():
         .withColumn("Prefix", initcap("Prefix"))\
         .withColumn("FullName", initcap("FullName"))\
         .drop("ingestion_timestamp")\
-        .withColumn("processed_on", current_date())
+        .withColumn("processed_on", current_timestamp())
 
     return df_customers_cleaned
 
 
-dlt.create_streaming_table("dim_customers_silver")
+dlt.create_streaming_table(
+    name = "dim_customers_silver",
+    expect_all_or_drop = valid_customers
+)
 
-dlt.create_auto_cdc_flow(
+dlt.apply_changes(
     target="dim_customers_silver",
     source="dim_customers_stg",
     keys=["CustomerKey"],
     sequence_by="processed_on",
     stored_as_scd_type=2
 )
+

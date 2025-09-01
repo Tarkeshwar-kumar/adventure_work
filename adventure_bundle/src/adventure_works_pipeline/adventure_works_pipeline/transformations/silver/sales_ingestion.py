@@ -4,6 +4,16 @@ from pyspark.sql.functions import *
 
 spark.sql("USE CATALOG adventure_work"); spark.sql("USE SCHEMA silver")
 
+valid_sales = {
+    "valid_order_number": "ordernumber IS NOT NULL",
+    "valid_order_date": "orderdate IS NOT NULL",
+    "valid_order_date_not_future": "orderdate <= current_date()",
+    "valid_stock_date": "stockdate IS NOT NULL",
+    "valid_stock_after_order": "stockdate >= orderdate",
+    "valid_sales_amount": "SalesAmount > 0"
+}
+
+
 @dlt.table(
     name="fact_sales_silver"
 )
@@ -18,6 +28,6 @@ def fact_sales_silver():
 
     df_sales = df_sales.withColumn("ordernumber", col("ordernumber").cast("int"))\
                 .drop("timestamp")\
-                .withColumn("processed_on", current_date())
+                .withColumn("processed_on", current_timestamp())
 
     return df_sales
